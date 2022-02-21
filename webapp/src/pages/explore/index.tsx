@@ -36,7 +36,7 @@ const ExplorePage: NextPage = () => {
                     ></div>
                     <h3 className="p-2 text-lg">{item.metadata.title}</h3>
                     <p className="p-2 text-sm">{item.metadata.description}</p>
-                    {JSON.stringify(item)}
+                    {/* {JSON.stringify(item)} */}
                   </section>
                 </a>
               </Link>
