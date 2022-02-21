@@ -1,0 +1,10 @@
+{
+  "name": "near-contracts",
+  "scripts": {
+    "build:all": "cargo build --all --target wasm32-unknown-unknown --release && copyfiles -f target/wasm32-unknown-unknown/release/*.wasm res",
+    "deploy:marketplace:testnet": "near deploy --wasmFile res/marketplace_nft.wasm"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  }
+}

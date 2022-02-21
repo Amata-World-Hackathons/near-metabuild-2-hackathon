@@ -1,0 +1,11 @@
+{
+  "name": "near-metabuild-2-hackathon",
+  "workspaces": [
+    "contracts/near-contracts",
+    "webapp"
+  ],
+  "packageManager": "yarn@3.1.1",
+  "devDependencies": {
+    "near-cli": "^3.2.0"
+  }
+}
