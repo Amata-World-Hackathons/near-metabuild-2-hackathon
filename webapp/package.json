@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "export:gh-pages": "ASSET_PREFIX=near-metabuild-2-hackathon next build && next export",
+    "export:gh-pages": "ASSET_PREFIX=\"/near-metabuild-2-hackathon\" next build && next export",
     "start": "next start",
     "lint": "next lint"
   },
