@@ -3,19 +3,7 @@ import Head from "next/head";
 import { useMarketplaceContract } from "src/contexts/MarketplaceContract";
 import { useNearWallet } from "src/contexts/NearWallet";
 
-const Home: NextPage = () => {
-  const { wallet, loading } = useNearWallet();
-  const { contract } = useMarketplaceContract();
-
-  if (contract) {
-    contract.nft_tokens({ limit: 10 }).then((tokens: any) => {
-      console.log("LOG", tokens);
-    });
-  }
-
-  console.log("WALLET", wallet);
-  console.log("CONTRACT", contract);
-
+const HomePage: NextPage = () => {
   return (
     <>
       <Head>
@@ -23,13 +11,9 @@ const Home: NextPage = () => {
         <meta name="description" content="An amazing marketplace" />
       </Head>
 
-      <header>
-        <h1>Welcome to Amata World - Marketplace</h1>
-
-        <p>Your wallet</p>
-      </header>
+      <h1>Welcome to Amata World&apos;s Marketplace</h1>
     </>
   );
 };
 
-export default Home;
+export default HomePage;

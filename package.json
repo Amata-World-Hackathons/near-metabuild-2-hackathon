@@ -1,5 +1,6 @@
 {
   "name": "near-metabuild-2-hackathon",
+  "private": true,
   "workspaces": [
     "contracts/near-contracts",
     "webapp"

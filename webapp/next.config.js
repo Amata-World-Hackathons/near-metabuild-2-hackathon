@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
+const basePath = process.env.BASE_PATH || "";
 const nextConfig = {
-  assetPrefix: process.env.ASSET_PREFIX || "",
+  basePath,
+  assetPrefix: basePath,
   reactStrictMode: true,
 };
 

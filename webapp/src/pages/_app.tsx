@@ -1,5 +1,6 @@
 import { MarketplaceContractProvider } from "src/contexts/MarketplaceContract";
 import { NearWalletProvider } from "src/contexts/NearWallet";
+import applyLayout from "src/components/applyLayout";
 import "src/globals.css";
 
 function MyApp({
@@ -12,7 +13,7 @@ function MyApp({
   return (
     <NearWalletProvider>
       <MarketplaceContractProvider>
-        <Component {...pageProps} />
+        {applyLayout(<Component {...pageProps} />)}
       </MarketplaceContractProvider>
     </NearWalletProvider>
   );

@@ -5,6 +5,8 @@ use near_contract_standards::non_fungible_token::{NonFungibleToken, Token, Token
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LazyOption;
 use near_sdk::json_types::ValidAccountId;
+use near_sdk::serde::{Deserialize, Serialize};
+use near_sdk::serde_json;
 use near_sdk::{
     env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise, PromiseOrValue,
 };
@@ -25,6 +27,13 @@ enum StorageKey {
     TokenMetadata,
     Enumeration,
     Approval,
+}
+
+#[derive(Serialize, Deserialize, BorshSerialize, BorshDeserialize)]
+#[serde(crate = "near_sdk::serde")]
+struct NFTTokenMetadataExtra {
+    latitude: f64,
+    longitude: f64,
 }
 
 #[near_bindgen]
@@ -60,10 +69,26 @@ impl Contract {
         &mut self,
         token_id: TokenId,
         receiver_id: ValidAccountId,
+        title: String,
+        description: String,
+        latitude: String,
+        longitude: String,
+        media_url: String,
         token_metadata: TokenMetadata,
     ) -> Token {
-        self.tokens
-            .mint(token_id, receiver_id, Some(token_metadata))
+        let mut metadata = token_metadata;
+        metadata.title = Some(title);
+        metadata.description = Some(description);
+        metadata.media = Some(media_url);
+        metadata.extra = Some(
+            serde_json::to_string(&NFTTokenMetadataExtra {
+                latitude: latitude.parse::<f64>().unwrap(),
+                longitude: longitude.parse::<f64>().unwrap(),
+            })
+            .unwrap(),
+        );
+
+        return self.tokens.mint(token_id, receiver_id, Some(metadata));
     }
 }
 

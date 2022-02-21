@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import * as nearApi from "near-api-js";
+import { useRouter } from "next/router";
+import LoadingIcon from "src/components/LoadingIcon";
+import { NextPage } from "next";
 
 export interface NearWallet {
   error?: string;
   loading: boolean;
-  wallet?: any;
+  wallet?: nearApi.WalletConnection;
   connection?: any;
 }
 
@@ -15,6 +18,7 @@ export const NearWalletProvider = ({
 }: {
   children?: React.ReactNode;
 }) => {
+  const router = useRouter();
   const [near, setNear] = useState<{
     wallet: nearApi.WalletConnection;
     connection: any;
@@ -42,12 +46,25 @@ export const NearWalletProvider = ({
     setupWallet();
   }, []);
 
+  useEffect(() => {
+    // remove the sensitive query parts from the URL
+    if (near?.wallet.isSignedIn()) {
+      if (router.query.account_id || router.query.all_keys) {
+        const { account_id, all_keys, ...otherParts } = router.query;
+        router.replace({
+          query: otherParts,
+          pathname: router.pathname,
+        });
+      }
+    }
+  }, [near?.wallet, router]);
+
   return (
     <NearWalletContext.Provider
       value={{
         wallet: near?.wallet,
         connection: near?.connection,
-        loading: !!near,
+        loading: !near,
       }}
     >
       {children}
@@ -57,4 +74,29 @@ export const NearWalletProvider = ({
 
 export const useNearWallet = (): NearWallet => {
   return useContext(NearWalletContext);
+};
+
+export const requireWalletConnection = (
+  Component: React.ComponentClass | NextPage
+) => {
+  return function RequireWalletConnection(props: Record<string, unknown>) {
+    const { loading, wallet } = useNearWallet();
+
+    return loading ? (
+      <LoadingIcon className="absolute top-1/2 left-1/2" />
+    ) : !wallet?.isSignedIn() ? (
+      <section className="flex flex-col items-center justify-center h-full">
+        <h1>This page requires a wallet connection</h1>
+
+        <button
+          className="mt-8 p-4 border-2 rounded border-red-500"
+          onClick={() => wallet?.requestSignIn()}
+        >
+          Connect your wallet
+        </button>
+      </section>
+    ) : (
+      <Component {...props} />
+    );
+  };
 };
