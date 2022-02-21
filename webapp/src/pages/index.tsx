@@ -4,11 +4,11 @@ import { useMarketplaceContract } from "src/contexts/MarketplaceContract";
 import { useNearWallet } from "src/contexts/NearWallet";
 
 const Home: NextPage = () => {
-  const { wallet, ready } = useNearWallet();
+  const { wallet, loading } = useNearWallet();
   const { contract } = useMarketplaceContract();
 
   if (contract) {
-    contract.nft_tokens({ limit: 10 }).then((tokens) => {
+    contract.nft_tokens({ limit: 10 }).then((tokens: any) => {
       console.log("LOG", tokens);
     });
   }

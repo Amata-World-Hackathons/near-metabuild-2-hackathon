@@ -1,28 +1,45 @@
 import React, { useState, useEffect, useContext } from "react";
 import * as nearApi from "near-api-js";
 
-const NearWalletContext = React.createContext();
+export interface NearWallet {
+  error?: string;
+  loading: boolean;
+  wallet?: any;
+  connection?: any;
+}
+
+const NearWalletContext = React.createContext<NearWallet>({ loading: true });
 
 export const NearWalletProvider = ({
   children,
 }: {
   children?: React.ReactNode;
 }) => {
-  const [near, setNear] = useState(null);
+  const [near, setNear] = useState<{
+    wallet: nearApi.WalletConnection;
+    connection: any;
+  } | null>(null);
 
-  useEffect(async () => {
-    const nearConnection = await nearApi.connect({
-      networkId: process.env.NEXT_PUBLIC_NEAR_NETWORK_ID,
-      keyStore: new nearApi.keyStores.BrowserLocalStorageKeyStore(),
-      nodeUrl: process.env.NEXT_PUBLIC_NEAR_NODE_URL,
-      walletUrl: process.env.NEXT_PUBLIC_NEAR_WALLET_URL,
-      helperUrl: process.env.NEXT_PUBLIC_NEAR_HELPER_URL,
-      explorerUrl: process.env.NEXT_PUBLIC_NEAR_EXPLORER_URL,
-    });
+  useEffect(() => {
+    async function setupWallet() {
+      const nearConnection = await nearApi.connect({
+        networkId: process.env.NEXT_PUBLIC_NEAR_NETWORK_ID!,
+        headers: {},
+        keyStore: new nearApi.keyStores.BrowserLocalStorageKeyStore(),
+        nodeUrl: process.env.NEXT_PUBLIC_NEAR_NODE_URL!,
+        walletUrl: process.env.NEXT_PUBLIC_NEAR_WALLET_URL!,
+        helperUrl: process.env.NEXT_PUBLIC_NEAR_HELPER_URL!,
+      });
 
-    const wallet = new nearApi.WalletConnection(nearConnection);
+      const wallet = new nearApi.WalletConnection(
+        nearConnection,
+        "amata-world-nft-marketplace-prototype"
+      );
 
-    setNear({ connection: nearConnection, wallet });
+      setNear({ connection: nearConnection, wallet });
+    }
+
+    setupWallet();
   }, []);
 
   return (
@@ -30,7 +47,7 @@ export const NearWalletProvider = ({
       value={{
         wallet: near?.wallet,
         connection: near?.connection,
-        ready: !!near,
+        loading: !!near,
       }}
     >
       {children}
@@ -38,6 +55,6 @@ export const NearWalletProvider = ({
   );
 };
 
-export const useNearWallet = () => {
+export const useNearWallet = (): NearWallet => {
   return useContext(NearWalletContext);
 };
