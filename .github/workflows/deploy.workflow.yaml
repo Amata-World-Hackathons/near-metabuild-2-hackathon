@@ -17,7 +17,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - run: yarn
-      - run: yarn workspace webapp run build -o ../docs
+      - run: yarn workspace webapp run export:gh-pages -o ../docs
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Automated publish
